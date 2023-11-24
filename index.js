@@ -26,7 +26,17 @@ async function run() {
     const userCollection = client.db("pollingAndSurveyDB").collection("users");
 
 
+    app.post("/users", async(req, res) => {
+        const user = req.body
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+    })
 
+    app.get("/users", async(req, res) => {
+        const cursor = userCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    })
 
 
 
