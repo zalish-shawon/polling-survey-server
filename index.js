@@ -24,6 +24,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const userCollection = client.db("pollingAndSurveyDB").collection("users");
+    const surveyCollection = client.db("pollingAndSurveyDB").collection("surveys");
 
 
     app.post("/users", async(req, res) => {
@@ -38,6 +39,21 @@ async function run() {
         res.send(result);
     })
 
+    app.post("/surveys", async(req, res) => {
+      const survey = {
+        ...req.body,
+        timestamp: new Date()
+      }
+
+      const result =  await surveyCollection.insertOne(survey);
+      res.send(result);
+    })
+
+    app.get("/surveys", async(req, res) => {
+      const cursor = surveyCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
 
 
 
