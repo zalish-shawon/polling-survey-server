@@ -25,6 +25,7 @@ async function run() {
     // await client.connect();
     const userCollection = client.db("pollingAndSurveyDB").collection("users");
     const surveyCollection = client.db("pollingAndSurveyDB").collection("surveys");
+    const voteCollection = client.db("pollingAndSurveyDB").collection("votes");
 
 
     app.post("/users", async(req, res) => {
@@ -55,6 +56,33 @@ async function run() {
       res.send(result);
     })
 
+    app.get("/surveys/:id", async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await surveyCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.post("/votes", async(req, res) => {
+      const { surveyId, vote, email } = req.body;
+      // console.log(vote);
+     
+      const newVote = {
+        surveyId: new ObjectId(surveyId),
+        vote,
+        email,
+      };
+      const result = await voteCollection.insertOne(newVote);
+      const updateField = vote === 'yes' ? 'yesVotes' : 'noVotes';
+      await surveyCollection.updateOne({ _id: new ObjectId(surveyId) }, { $inc: { [updateField]: 1 } });
+      res.send(result);
+  })
+
+  app.get("/votes", async(req, res) => {
+    const cursor = voteCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+  })
 
 
     // Send a ping to confirm a successful connection
