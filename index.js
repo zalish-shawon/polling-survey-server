@@ -26,6 +26,7 @@ async function run() {
     const userCollection = client.db("pollingAndSurveyDB").collection("users");
     const surveyCollection = client.db("pollingAndSurveyDB").collection("surveys");
     const voteCollection = client.db("pollingAndSurveyDB").collection("votes");
+    const commentCollection = client.db("pollingAndSurveyDB").collection("comments");
 
 
     app.post("/users", async(req, res) => {
@@ -49,6 +50,18 @@ async function run() {
       const result =  await surveyCollection.insertOne(survey);
       res.send(result);
     })
+
+    app.post("/comments", async(req, res) => {
+      const comment = req.body 
+      const result =  await commentCollection.insertOne(comment);
+      res.send(result);
+    })
+
+    app.get("/comments", async(req, res) => {
+      const cursor = commentCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+  })
 
     app.get("/surveys", async(req, res) => {
       const cursor = surveyCollection.find();
