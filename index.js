@@ -88,6 +88,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/comments/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await commentCollection.findOne(query);
+      res.send(result);
+    });
+
     app.get("/surveys", async (req, res) => {
       const cursor = surveyCollection.find();
       const result = await cursor.toArray();
