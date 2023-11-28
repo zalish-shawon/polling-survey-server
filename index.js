@@ -32,6 +32,7 @@ async function run() {
       .collection("comments");
     
     const paymentCollection = client.db("pollingAndSurveyDB").collection("payments");
+    const reportCollection = client.db("pollingAndSurveyDB").collection("reports");
 
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -179,6 +180,19 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    app.get("/reports", async (req, res) => {
+      const cursor = reportCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/reports", async (req, res) => {
+      const report = req.body;
+      const result = await reportCollection.insertOne(report);
+      res.send(result);
+    });
+
+    
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
