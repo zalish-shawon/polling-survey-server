@@ -101,14 +101,37 @@ async function run() {
       res.send(result);
     });
 
+
+    app.put("/surveys/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const options = {upsert: true};
+      const updatedSurvey = req.body
+      const survey = {
+        $set: {
+
+          title: updatedSurvey.title,
+          description: updatedSurvey.description,
+           image: updatedSurvey.image,
+           category: updatedSurvey.category,
+           
+      }
+    }
+    const result = await surveyCollection.updateOne(filter,survey, options)
+    res.send(result);
+    })
+
     app.post("/votes", async (req, res) => {
-      const { surveyId, vote, email } = req.body;
+      const { surveyId, vote, email,name, responderName, date } = req.body;
       // console.log(vote);
 
       const newVote = {
         surveyId: new ObjectId(surveyId),
         vote,
         email,
+        name,
+        responderName,
+        date,
       };
       const result = await voteCollection.insertOne(newVote);
       const updateField = vote === "yes" ? "yesVotes" : "noVotes";
