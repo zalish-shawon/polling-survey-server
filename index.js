@@ -109,6 +109,25 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/surveys/:id", async (req, res) => {
+      const survey = req.body;
+      // console.log(user);
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          surveyId: survey.surveyId,
+          surveyName: survey.surveyName,
+          surveyOwner: survey.surveyOwner,
+          message: survey.message,
+          status: survey.status,
+
+        },
+      };
+      const result = await surveyCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
 
     app.put("/surveys/:id", async (req, res) => {
       const id = req.params.id;
@@ -128,6 +147,8 @@ async function run() {
     const result = await surveyCollection.updateOne(filter,survey, options)
     res.send(result);
     })
+
+ 
 
     app.post("/votes", async (req, res) => {
       const { surveyId, vote, email,name, responderName, date } = req.body;
@@ -180,6 +201,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+
     app.get("/reports", async (req, res) => {
       const cursor = reportCollection.find();
       const result = await cursor.toArray();
